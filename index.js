@@ -169,6 +169,24 @@
             ...set
         });
     });
+    
+    const tempFolder = path.join(__dirname, "tempFile");
+      if (!fs.existsSync(tempFolder)) fs.mkdirSync(tempFolder);
+      
+      setInterval(() => {
+        const files = fs.readdirSync(tempFolder);
+        const now = Date.now();
+        for (const file of files) {
+          const filePath = path.join(tempFolder, file);
+          const stats = fs.statSync(filePath);
+          const ageInMs = now - stats.mtimeMs;
+          if (ageInMs > 1000 * 60 * 60) {
+            fs.unlinkSync(filePath);
+          }
+        }
+      }, 1000 * 60 * 30);
+    
+    app.use("/cdn/downloads", express.static(path.join(__dirname, "tempFile")));
 
     app.use((req, res, next) => {
         logger.info(`404: ${req.method} ${req.path}`);
