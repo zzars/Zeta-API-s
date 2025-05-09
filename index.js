@@ -167,7 +167,7 @@ app.get('/set', (req, res) => {
 });
 
 // Temp File Cleanup
-const tempFolder = path.join(__dirname, "tempFile");
+const tempFolder = path.join(__dirname, "tmp");
 if (!fs.existsSync(tempFolder)) fs.mkdirSync(tempFolder);
 
 setInterval(() => {
@@ -183,7 +183,7 @@ setInterval(() => {
     }
 }, 1000 * 60 * 30);
 
-app.use("/cdn/downloads", express.static(path.join(__dirname, "tempFile")));
+app.use("/cdn/downloads", express.static(path.join(__dirname, "tmp")));
 
 app.use((req, res, next) => {
     logger.info(`404: ${req.method} ${req.path}`);
