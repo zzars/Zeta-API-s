@@ -166,9 +166,15 @@ app.get('/set', (req, res) => {
     });
 });
 
-// Temp File Cleanup
-const tempFolder = path.join(__dirname, "tmp");
-if (!fs.existsSync(tempFolder)) fs.mkdirSync(tempFolder);
+const tempFolder = path.join(__dirname, 'tempp');
+
+// Pastikan folder dan file ada
+if (!fs.existsSync(tempFolder)) {
+    console.error(`Folder ${tempFolder} tidak ditemukan.`);
+} else {
+    // Static file server untuk folder yang sudah disiapkan
+    app.use("/cdn/downloads", express.static(tempFolder));
+}
 
 setInterval(() => {
     const files = fs.readdirSync(tempFolder);
@@ -177,13 +183,15 @@ setInterval(() => {
         const filePath = path.join(tempFolder, file);
         const stats = fs.statSync(filePath);
         const ageInMs = now - stats.mtimeMs;
-        if (ageInMs > 1000 * 60 * 60) {
-            fs.unlinkSync(filePath);
+        if (ageInMs > 1000 * 60 * 60) { // Hapus file lebih tua dari 1 jam
+            try {
+                fs.unlinkSync(filePath);
+            } catch (err) {
+                console.error(`Gagal menghapus file: ${filePath}`, err);
+            }
         }
     }
-}, 1000 * 60 * 30);
-
-app.use("/cdn/downloads", express.static(path.join(__dirname, "tmp")));
+}, 1000 * 60 * 30); // Setiap 30 menit
 
 app.use((req, res, next) => {
     logger.info(`404: ${req.method} ${req.path}`);
