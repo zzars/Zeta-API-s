@@ -50,16 +50,18 @@ String.prototype.capitalize = function() {
 };
 
 logger.info('Loading scraper module...');
-global.scraper = new (require('./lib/scrape.js'))('./lib/scrape_file');
-global.scrape = await scraper.list();
+(async () => {
+  global.scraper = new (await require('./lib/scrape.js'))('./lib/scrape_file');
+  global.scrape = await scraper.list();
 
-setInterval(async () => {
+  setInterval(async () => {
     try {
-        await scraper.load();
+      await scraper.load();
     } catch (error) {
-        logger.error(`Failed to reload scraper: ${error.message}`);
+      logger.error(`Failed to reload scraper: ${error.message}`);
     }
-}, 2000);
+  }, 2000);
+})();
 
 // Function to load endpoints from directory
 function loadEndpointsFromDirectory(directory, baseRoute = '') {
