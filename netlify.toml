@@ -4,6 +4,6 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/docs/index.html"
   status = 200
   force = true
