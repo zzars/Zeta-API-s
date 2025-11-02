@@ -16,7 +16,6 @@
     "cheerio": "^1.0.0",
     "express": "^4.19.2",
     "qrcode": "^1.5.4",
-    "serverless-http": "^3.0.1",
     "yt-search": "^2.12.1"
   }
 }

@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const set = require('./settings');
 const chalk = require('chalk');
-const serverless = require('serverless-http');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -204,4 +203,4 @@ app.use((err, req, res, next) => {
 });
 
 // Serverless export
-module.exports = serverless(app);
+module.exports = app;
