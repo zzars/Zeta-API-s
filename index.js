@@ -57,13 +57,11 @@ logger.info("Loading scraper module...");
   global.scraper = new (await require("./lib/scrape.js"))("./lib/scrape_file");
   global.scrape = await scraper.list();
 
-  setInterval(async () => {
-    try {
-      await scraper.load();
-    } catch (error) {
-      logger.error(`Failed to reload scraper: ${error.message}`);
-    }
-  }, 2000);
+  try {
+    await scraper.load();
+  } catch (error) {
+    logger.error(`Failed to reload scraper: ${error.message}`);
+  }
 })();
 
 // Function to load endpoints from directory
@@ -194,27 +192,6 @@ if (!fs.existsSync(tempFolder)) {
   // Static file server untuk folder yang sudah disiapkan
   app.use("/cdn/downloads", express.static(tempFolder));
 }
-
-setInterval(
-  () => {
-    const files = fs.readdirSync(tempFolder);
-    const now = Date.now();
-    for (const file of files) {
-      const filePath = path.join(tempFolder, file);
-      const stats = fs.statSync(filePath);
-      const ageInMs = now - stats.mtimeMs;
-      if (ageInMs > 1000 * 60 * 60) {
-        // Hapus file lebih tua dari 1 jam
-        try {
-          fs.unlinkSync(filePath);
-        } catch (err) {
-          console.error(`Gagal menghapus file: ${filePath}`, err);
-        }
-      }
-    }
-  },
-  1000 * 60 * 30,
-); // Setiap 30 menit
 
 app.use((req, res, next) => {
   logger.info(`404: ${req.method} ${req.path}`);
